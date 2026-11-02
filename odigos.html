@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Λίστα απλήρωτων τιμολογίων · ThetaNorth</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  /* Οδηγός μίας σελίδας για ιδιοκτήτη που δεν έχει δει τη λίστα (2/11/2026). Χωρίς τιμή (απόφαση 20/10).
+     Κινητό πρώτα· στην εκτύπωση (PDF) γίνεται μία σελίδα A4. PDF: engine/tools/render.ps1 */
+  :root { --blue:#17386E; --terra:#DB6431; --terra-btn:#C15222; --sand:#F6F1E9; --ink:#17202E; --line:#E4DCCD; --muted:#5A6272; --card:#FFFDF9; --terra-soft:#FBE9E0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "IBM Plex Sans", sans-serif; color: var(--ink); background: var(--sand); font-size: 16px; line-height: 1.45; -webkit-print-color-adjust: exact; print-color-adjust: exact; -webkit-text-size-adjust: 100%; }
+  .page { max-width: 760px; margin: 0 auto; padding: 0 16px 24px; }
+  .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--blue); margin: 0 -16px 20px; padding: 10px 16px; }
+  .lockup { display: flex; align-items: center; gap: 8px; }
+  .lockup svg { width: 40px; height: 40px; flex: none; }
+  .wm { font-family: "Manrope", sans-serif; letter-spacing: -0.015em; white-space: nowrap; font-size: 22px; color: var(--sand); }
+  .wm b { font-weight: 800; } .wm span { font-weight: 500; }
+  .head .ttl { font-family: "Manrope"; font-weight: 700; font-size: 12px; line-height: 1.3; color: var(--sand); opacity: 0.85; text-align: right; }
+  h1 { font-family: "Manrope"; font-weight: 800; font-size: 28px; line-height: 1.12; letter-spacing: -0.02em; color: var(--blue); margin: 0 0 10px; }
+  h1 em { font-style: normal; color: var(--terra); }
+  .lead { font-size: 16.5px; color: var(--muted); margin: 0 0 18px; }
+  h2 { font-family: "Manrope"; font-weight: 800; font-size: 18px; color: var(--blue); margin: 0 0 8px; }
+  h3 { font-family: "Manrope"; font-weight: 800; font-size: 16px; color: var(--blue); margin: 0 0 6px; }
+  b, strong { font-weight: 600; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; }
+  .card ul { margin: 0; padding-left: 18px; }
+  .card li { margin-bottom: 5px; }
+  .card li:last-child { margin-bottom: 0; }
+  .card li::marker { color: var(--terra); }
+  .card p { margin: 0 0 6px; } .card p:last-child { margin-bottom: 0; }
+  .card.terra { background: var(--terra-soft); border-color: var(--terra); }
+  .card.blue { background: var(--blue); color: var(--sand); border-color: var(--blue); }
+  .card.blue h3 { color: var(--sand); }
+  .card.blue li::marker { color: #F2A27E; }
+  .steps { list-style: none; margin: 0 0 16px; padding: 0; display: grid; gap: 8px; }
+  .step { display: grid; grid-template-columns: 34px 1fr; gap: 0 10px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+  .step .n { grid-row: span 2; font-family: "Manrope"; font-weight: 800; font-size: 26px; color: var(--terra); line-height: 1; }
+  .step .t { font-family: "Manrope"; font-weight: 800; font-size: 16px; color: var(--blue); margin-bottom: 2px; }
+  .step .d { font-size: 15px; }
+  .card .catch { list-style: none; margin: 0; padding: 0; }
+  .catch li { padding: 7px 0; border-top: 1px solid var(--line); margin: 0; }
+  .catch li:first-child { border-top: 0; padding-top: 0; }
+  .tag { display: inline-block; font-family: "Manrope"; font-weight: 800; font-size: 12.5px; letter-spacing: 0.02em; padding: 2px 8px; border-radius: 999px; margin-right: 6px; white-space: nowrap; }
+  .tag.red { background: #F9DCD3; color: #A23B16; }
+  .tag.amber { background: #FBEBC8; color: #7A5200; }
+  .tag.grey { background: #E7ECF4; color: var(--blue); }
+  .proof { border-left: 4px solid var(--terra); padding: 4px 0 4px 12px; margin: 0 0 14px; font-size: 15px; }
+  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; margin-top: 6px; }
+  .foot b { font-family: "Manrope"; font-weight: 700; color: var(--blue); }
+  .foot a { color: var(--muted); }
+  @media (min-width: 700px) {
+    .steps { grid-template-columns: repeat(5, 1fr); }
+    .step { display: block; }
+    .step .n { margin-bottom: 4px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid2 .card { margin-bottom: 0; }
+    .grid2 { margin-bottom: 14px; }
+  }
+
+  /* Εκτύπωση: μία σελίδα A4 */
+  @page { size: A4; margin: 0; }
+  @media print {
+    body { font-size: 9.7pt; line-height: 1.38; background: var(--sand); }
+    .page { width: 210mm; height: 297mm; max-width: none; overflow: hidden; padding: 0 14mm; position: relative; }
+    .head { margin: 0 -14mm 5mm; padding: 3.5mm 14mm; }
+    .lockup { gap: 3mm; }
+    .lockup svg { width: 16mm; height: 16mm; margin: -1mm 0; }
+    .wm { font-size: 19pt; }
+    .head .ttl { font-size: 10pt; }
+    h1 { font-size: 22pt; margin-bottom: 2mm; }
+    .lead { font-size: 11pt; margin-bottom: 4mm; }
+    h2 { font-size: 12pt; margin-bottom: 2mm; }
+    h3 { font-size: 11pt; margin-bottom: 1.5mm; }
+    .card { border-radius: 2.5mm; padding: 2.8mm 4mm; margin-bottom: 3.2mm; border-width: 0.3mm; }
+    .card li { margin-bottom: 1mm; }
+    .steps { grid-template-columns: repeat(5, 1fr); gap: 2.5mm; margin-bottom: 3.5mm; }
+    .step { display: block; padding: 2.8mm 3mm; border-radius: 2.5mm; border-width: 0.3mm; }
+    .step .n { font-size: 16pt; margin-bottom: 1mm; }
+    .step .t { font-size: 10pt; margin-bottom: 1mm; }
+    .step .d { font-size: 8.9pt; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 3.2mm; margin-bottom: 3.2mm; }
+    .grid2 .card { margin-bottom: 0; }
+    .catch li { padding: 1.4mm 0; }
+    .tag { font-size: 7.8pt; padding: 0.3mm 2mm; }
+    .proof { font-size: 9.5pt; margin-bottom: 3.2mm; border-left-width: 1mm; padding-left: 3mm; }
+    .foot { position: absolute; left: 14mm; right: 14mm; bottom: 8mm; font-size: 8.8pt; margin: 0; padding-top: 2.5mm; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="head">
+    <div class="lockup">
+      <svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><circle cx="60" cy="60" r="40" stroke="#F6F1E9" stroke-width="10"/><path d="M27 60 H60" stroke="#F6F1E9" stroke-width="10" stroke-linecap="round"/><path d="M60 60 V44" stroke="#DB6431" stroke-width="10" stroke-linecap="round"/><path d="M60 27 L69.5 44.5 L50.5 44.5 Z" fill="#DB6431" stroke="#DB6431" stroke-width="2" stroke-linejoin="round"/></svg>
+      <div class="wm"><b>Theta</b><span>North</span></div>
+    </div>
+    <div class="ttl">Λίστα απλήρωτων τιμολογίων<br>οδηγός μίας σελίδας</div>
+  </div>
+
+  <h1>Κάθε Κυριακή ξέρετε <em>τι χρωστάτε και σε ποιον</em></h1>
+  <p class="lead">Για μαγαζιά που παίρνουν τιμολόγια προμηθευτών σε χαρτί και τα πληρώνουν μαζεμένα. Εσείς σαρώνετε το τιμολόγιο με το κινητό. Τα υπόλοιπα γίνονται μόνα τους.</p>
+
+  <div class="card">
+    <h3>Τι λύνει</h3>
+    <ul>
+      <li>Τη μέρα των πληρωμών ψάχνετε σε κάθε χαρτί το σωστό ποσό, γιατί πολλοί προμηθευτές γράφουν και το προηγούμενο υπόλοιπο.</li>
+      <li>Ελέγχετε ότι κάθε τιμολόγιο έχει το δικό σας ΑΦΜ, γιατί ο ίδιος προμηθευτής εξυπηρετεί κι άλλα μαγαζιά.</li>
+      <li>Αθροίζετε με το χέρι ανά προμηθευτή. Αν χαθεί ένα χαρτί, δεν το βλέπει κανείς.</li>
+    </ul>
+  </div>
+
+  <h2>Πώς δουλεύει</h2>
+  <ol class="steps">
+    <li class="step"><div class="n">1</div><div class="t">Σαρώνετε</div><div class="d">Μόλις έρθει τιμολόγιο, το σαρώνετε με την εφαρμογή Google Drive στον φάκελο «Νέα». Ένα τιμολόγιο ή πολλά μαζί.</div></li>
+    <li class="step"><div class="n">2</div><div class="t">Το βράδυ διαβάζει το AI</div><div class="d">Στις 21:00 διαβάζει τα νέα: προμηθευτή, ΑΦΜ, αριθμό, ημερομηνία, ποσά και τρόπο πληρωμής.</div></li>
+    <li class="step"><div class="n">3</div><div class="t">Έλεγχοι με κώδικα</div><div class="d">Τους κάνει κανονικός κώδικας, χωρίς AI: έγκυρο ΑΦΜ; καθαρή αξία + ΦΠΑ = πληρωτέο; δικό σας ΑΦΜ; το έχουμε ξαναδεί;</div></li>
+    <li class="step"><div class="n">4</div><div class="t">Η λίστα</div><div class="d">Κάθε τιμολόγιο γίνεται γραμμή σε ένα Google Sheet, με σύνολα ανά προμηθευτή. Ό,τι δεν βγαίνει παίρνει σημάδι.</div></li>
+    <li class="step"><div class="n">5</div><div class="t">Email την Κυριακή</div><div class="d">Στις 09:00: «Προς πληρωμή Χ € σε Ν τιμολόγια» και ένα κουμπί που ανοίγει τη λίστα, με τα παλαιότερα πρώτα.</div></li>
+  </ol>
+
+  <div class="grid2">
+    <div class="card terra">
+      <h3>Τι κάνετε εσείς</h3>
+      <ul>
+        <li>Μόνο σαρώνετε.</li>
+        <li>Πληρώνετε από το e-banking, όπως πάντα, και γράφετε «Ναι» στη στήλη «Πληρώθηκε». Το σύνολο ενημερώνεται αμέσως.</li>
+        <li>Τα χαρτιά πάνε στον λογιστή όπως πάντα. Η λίστα δεν τον αντικαθιστά.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Τι πιάνει</h3>
+      <ul class="catch">
+        <li><span class="tag red">ΛΑΘΟΣ ΚΑΤΑΣΤΗΜΑ</span>Τιμολόγιο σε άλλο ΑΦΜ. Μένει έξω από το σύνολο.</li>
+        <li><span class="tag grey">ΔΙΠΛΟ</span>Το ίδιο τιμολόγιο σαρώθηκε δύο φορές. Μετράει μία.</li>
+        <li><span class="tag amber">Θέλει έλεγχο</span>Θολό ΑΦΜ ή ποσά που δεν βγαίνουν. Το βλέπετε πριν πληρώσετε.</li>
+        <li><span class="tag grey">Προηγ. υπόλοιπο</span>Γράφεται χωριστά. Μετράει μόνο το ποσό του τιμολογίου.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Τι χρειάζεται</h3>
+      <ul>
+        <li>Ένα κινητό με την εφαρμογή Google Drive.</li>
+        <li>Έναν λογαριασμό Google (Gmail).</li>
+        <li>Περίπου 40 λεπτά στήσιμο, μαζί, από κοντά (στο πρώτο μαγαζί μετρήθηκαν ~42′).</li>
+      </ul>
+    </div>
+    <div class="card blue">
+      <h3>Τα δεδομένα σας</h3>
+      <ul>
+        <li>Οι σαρώσεις και η λίστα μένουν στο δικό σας Google Drive. Το σύστημα δεν διαβάζει IBAN.</li>
+        <li>Το AI δεν αγγίζει λεφτά. Την πληρωμή την κάνετε πάντα εσείς.</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="proof">Τρέχει από 27/10/2026 σε ένα καφέ στα νότια προάστια, μετά από 3 σωστά δοκιμαστικά τρεξίματα με πραγματικά τιμολόγια. Κάθε βράδυ μου έρχεται αναφορά για το τρέξιμο, και ειδοποίηση αν βγει σφάλμα. Αν θέλετε να σταματήσει, μου στέλνετε ένα μήνυμα και σταματάει χωρίς να σβηστεί τίποτα.</p>
+
+  <div class="foot"><span><b>ThetaNorth</b> · Θοδωρής Ζαφειρούλης · info@thetanorth.gr</span><span><a href="https://thetanorth.gr">thetanorth.gr</a> · Νοέμβριος 2026</span></div>
+</div>
+</body>
+</html>

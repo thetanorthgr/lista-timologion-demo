@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Λίστα τιμολογίων: δείγμα · ThetaNorth</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+  /* Demo της λίστας απλήρωτων τιμολογίων για κλήση διάγνωσης (2/11/2026).
+     ΟΛΑ ψεύτικα: μαγαζί, προμηθευτές, αριθμοί, ποσά. Τίποτα από τον πελάτη του pilot.
+     Τα σύνολα βγαίνουν από τον πίνακα INVOICES (κάτω, στο script), όχι γραμμένα με το χέρι. */
+  :root { --blue:#17386E; --terra:#DB6431; --terra-btn:#C15222; --sand:#F6F1E9; --ink:#17202E; --line:#E4DCCD; --muted:#5A6272; --card:#FFFDF9; --terra-soft:#FBE9E0; --blue-soft:#E7ECF4; --green:#1F6B45; --green-soft:#DDEFE4; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "IBM Plex Sans", sans-serif; color: var(--ink); background: var(--sand); font-size: 16px; line-height: 1.45; -webkit-text-size-adjust: 100%; }
+  .sample { position: sticky; top: 0; z-index: 5; background: var(--terra-soft); border-bottom: 2px solid var(--terra); color: #8A3412; font-family: "Manrope"; font-weight: 800; font-size: 13.5px; text-align: center; padding: 7px 16px; }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 16px 16px 28px; }
+  .intro { color: var(--muted); font-size: 15px; margin: 0 0 14px; }
+  h2 { font-family: "Manrope"; font-weight: 800; font-size: 19px; color: var(--blue); margin: 26px 0 4px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); font-size: 14px; margin: 0 0 10px; }
+  b { font-weight: 600; }
+
+  /* Email */
+  .mail { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(23,32,46,0.06); }
+  .mail-meta { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .mail-subj { font-weight: 600; font-size: 16.5px; line-height: 1.3; margin-bottom: 6px; }
+  .mail-from { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--muted); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--blue); flex: none; display: grid; place-items: center; }
+  .avatar svg { width: 22px; height: 22px; }
+  .mail-from .who { color: var(--ink); font-weight: 600; }
+  .mail-body { padding: 14px; background: var(--sand); }
+  .ecard { background: var(--card); border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+  .ehead { background: var(--blue); color: var(--sand); font-family: "Manrope"; font-weight: 700; font-size: 14px; padding: 10px 14px; }
+  .ein { padding: 14px; }
+  .ein p { margin: 0 0 10px; font-size: 15px; }
+  .due { background: var(--blue-soft); border-radius: 8px; padding: 12px 14px; margin: 0 0 12px; }
+  .due .lbl { font-family: "Manrope"; font-weight: 800; font-size: 12px; letter-spacing: 0.08em; color: var(--blue); }
+  .due .amt { font-family: "Manrope"; font-weight: 800; font-size: 30px; color: var(--blue); line-height: 1.15; letter-spacing: -0.02em; }
+  .due .cnt { font-size: 14.5px; color: var(--ink); }
+  .notes { border-left: 3px solid var(--terra); padding: 2px 0 2px 10px; margin: 0 0 14px; font-size: 14.5px; }
+  .notes div { margin-bottom: 4px; } .notes div:last-child { margin-bottom: 0; }
+  .btn { display: inline-block; background: var(--terra-btn); color: #fff; font-family: "Manrope"; font-weight: 800; font-size: 15px; text-decoration: none; padding: 11px 18px; border-radius: 8px; }
+  .esig { font-size: 13.5px; color: var(--muted); margin-top: 12px; }
+  .efoot { font-size: 12px; color: var(--muted); text-align: center; padding: 10px 14px 2px; }
+
+  /* Λίστα */
+  .inv { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; margin-bottom: 9px; }
+  .inv.out { background: #F3EFE7; }
+  .inv.paid { opacity: 0.6; }
+  .row1 { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .sup { font-family: "Manrope"; font-weight: 800; font-size: 15.5px; color: var(--blue); }
+  .money { font-family: "Manrope"; font-weight: 800; font-size: 16.5px; white-space: nowrap; }
+  .inv.out .money { text-decoration: line-through; color: var(--muted); }
+  .meta { font-size: 13.5px; color: var(--muted); margin-top: 2px; }
+  .calc { font-size: 13.5px; margin-top: 2px; }
+  .prev { font-size: 13.5px; margin-top: 4px; background: var(--blue-soft); border-radius: 6px; padding: 4px 8px; }
+  .why { font-size: 13.5px; margin-top: 6px; }
+  .tag { display: inline-block; font-family: "Manrope"; font-weight: 800; font-size: 12px; letter-spacing: 0.02em; padding: 2px 8px; border-radius: 999px; margin-right: 6px; white-space: nowrap; }
+  .tag.red { background: #F9DCD3; color: #A23B16; }
+  .tag.amber { background: #FBEBC8; color: #7A5200; }
+  .tag.grey { background: var(--blue-soft); color: var(--blue); }
+  .tag.green { background: var(--green-soft); color: var(--green); }
+  .pay { margin-top: 8px; font: inherit; font-family: "Manrope"; font-weight: 700; font-size: 14px; color: var(--blue); background: #fff; border: 1.5px solid var(--blue); border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+  .inv.paid .pay { border-color: var(--green); color: var(--green); }
+  .group { font-family: "Manrope"; font-weight: 800; font-size: 13px; letter-spacing: 0.06em; color: var(--muted); margin: 16px 0 8px; text-transform: uppercase; }
+
+  /* Ανά προμηθευτή */
+  .sumlist { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 4px 13px; }
+  .srow { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+  .srow:first-child { border-top: 0; }
+  .srow .n { font-weight: 600; }
+  .srow .m { font-size: 13px; color: var(--muted); }
+  .srow .v { font-family: "Manrope"; font-weight: 800; white-space: nowrap; text-align: right; }
+  .srow.total { border-top: 2px solid var(--blue); }
+  .srow.total .n, .srow.total .v { color: var(--blue); font-family: "Manrope"; font-weight: 800; }
+  .srow.aside .n, .srow.aside .v { color: var(--muted); font-weight: 500; font-family: inherit; }
+
+  /* Πώς φτιάχτηκε */
+  .how { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+  .how li { counter-increment: s; position: relative; padding: 0 0 9px 34px; font-size: 14.5px; }
+  .how li::before { content: counter(s); position: absolute; left: 0; top: -1px; width: 24px; height: 24px; border-radius: 50%; background: var(--blue); color: var(--sand); font-family: "Manrope"; font-weight: 800; font-size: 13px; display: grid; place-items: center; }
+  .safe { background: var(--blue); color: var(--sand); border-radius: 10px; padding: 12px 14px; font-size: 14.5px; margin-top: 6px; }
+  .safe div { margin-bottom: 4px; } .safe div:last-child { margin-bottom: 0; }
+  .reset { background: none; border: 0; color: var(--muted); text-decoration: underline; font: inherit; font-size: 13.5px; cursor: pointer; padding: 0; margin-top: 4px; }
+  .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; margin-top: 24px; }
+  .foot b { font-family: "Manrope"; font-weight: 700; color: var(--blue); }
+  .foot a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="sample">Δείγμα με ψεύτικα στοιχεία · μαγαζί, προμηθευτές και ποσά είναι φανταστικά</div>
+<div class="wrap">
+  <p class="intro">Έτσι φτάνει η σύνοψη στο κινητό του ιδιοκτήτη κάθε Κυριακή στις 09:00. Από κάτω είναι η λίστα που ανοίγει το κουμπί.</p>
+
+  <div class="mail" id="email">
+    <div class="mail-meta">
+      <div class="mail-subj">Προς πληρωμή <span class="js-total"></span> σε <span class="js-count"></span></div>
+      <div class="mail-from">
+        <div class="avatar"><svg viewBox="0 0 120 120" fill="none" aria-hidden="true"><circle cx="60" cy="60" r="40" stroke="#F6F1E9" stroke-width="12"/><path d="M27 60 H60" stroke="#F6F1E9" stroke-width="12" stroke-linecap="round"/><path d="M60 60 V44" stroke="#DB6431" stroke-width="12" stroke-linecap="round"/><path d="M60 27 L69.5 44.5 L50.5 44.5 Z" fill="#DB6431" stroke="#DB6431" stroke-width="2" stroke-linejoin="round"/></svg></div>
+        <div><span class="who">ThetaNorth</span> · προς εσάς<br>Κυριακή, 09:00</div>
+      </div>
+    </div>
+    <div class="mail-body">
+      <div class="ecard">
+        <div class="ehead">Καφέ Παράδειγμα · Εβδομαδιαία σύνοψη τιμολογίων</div>
+        <div class="ein">
+          <p>Καλημέρα. Αυτά μένουν απλήρωτα μέχρι σήμερα.</p>
+          <div class="due">
+            <div class="lbl">ΠΡΟΣ ΠΛΗΡΩΜΗ</div>
+            <div class="amt js-total"></div>
+            <div class="cnt">σε <span class="js-count"></span> · <span class="js-sups"></span></div>
+          </div>
+          <div class="notes">
+            <div class="js-check"></div>
+            <div>Αυτή την εβδομάδα καταχωρήθηκαν <b class="js-week"></b> τιμολόγια.</div>
+          </div>
+          <a class="btn" href="#lista">Άνοιγμα λίστας</a>
+          <div class="esig">ThetaNorth · info@thetanorth.gr</div>
+        </div>
+      </div>
+      <div class="efoot">Αυτόματη σύνοψη κάθε Κυριακή</div>
+    </div>
+  </div>
+
+  <h2 id="lista">Προς πληρωμή (παλαιότερα πρώτα)</h2>
+  <p class="sub">Πατήστε «Πλήρωσα» σε ένα τιμολόγιο: το σύνολο εδώ και στο email αλλάζει αμέσως, όπως όταν γράφετε «Ναι» στο «Πληρώθηκε».</p>
+  <div id="due-list"></div>
+  <div class="group">Δεν μετράνε στο σύνολο</div>
+  <div id="out-list"></div>
+  <button class="reset" type="button" id="reset">Επαναφορά του δείγματος</button>
+
+  <h2>Ανά προμηθευτή</h2>
+  <p class="sub">Πόσα απλήρωτα έχει ο καθένας και πόσο παλιό είναι το παλαιότερο.</p>
+  <div class="sumlist" id="sums"></div>
+
+  <h2>Πώς έφτασαν εδώ</h2>
+  <ol class="how">
+    <li>Ο ιδιοκτήτης σάρωσε κάθε τιμολόγιο με την εφαρμογή Google Drive, στον φάκελο «Νέα».</li>
+    <li>Στις 21:00 το AI διάβασε τα νέα: προμηθευτή, ΑΦΜ, αριθμό, ημερομηνία, ποσά, τρόπο πληρωμής.</li>
+    <li>Κανονικός κώδικας έλεγξε το ΑΦΜ, αν καθαρή αξία + ΦΠΑ = πληρωτέο, αν το τιμολόγιο είναι στο ΑΦΜ του μαγαζιού και αν το έχουμε ξαναδεί.</li>
+    <li>Κάθε τιμολόγιο έγινε γραμμή στο Google Sheet του μαγαζιού. Ό,τι δεν βγήκε πήρε σημάδι.</li>
+    <li>Την Κυριακή στις 09:00 ήρθε το email.</li>
+  </ol>
+  <div class="safe">
+    <div>Οι σαρώσεις και η λίστα μένουν στο Google Drive του μαγαζιού. Το σύστημα δεν διαβάζει IBAN.</div>
+    <div>Το AI δεν αγγίζει λεφτά. Την πληρωμή την κάνει πάντα ο ιδιοκτήτης.</div>
+  </div>
+
+  <div class="foot"><span><b>ThetaNorth</b> · info@thetanorth.gr</span><span><a href="https://thetanorth.gr">thetanorth.gr</a></span></div>
+</div>
+
+<script>
+// Ψεύτικα τιμολόγια. kind: "due" = επί πιστώσει, μετράει· "wrong" = ΛΑΘΟΣ ΚΑΤΑΣΤΗΜΑ· "dup" = ΔΙΠΛΟ· "cash" = πληρώθηκε επί τόπου.
+var INVOICES = [
+  { sup: "Γαλακτοκομικά Άλφα", no: "Α 1043", date: "14/10", net: 160.00, vat: 20.80, vatp: 13, kind: "due", prev: 412.50 },
+  { sup: "Αρτοποιείο Βήτα",    no: "Β 0218", date: "22/10", net: 85.00,  vat: 11.05, vatp: 13, kind: "due" },
+  { sup: "Καφές Γάμμα",        no: "ΤΔ 557", date: "23/10", net: 310.00, vat: 74.40, vatp: 24, kind: "due" },
+  { sup: "Αναψυκτικά Δέλτα",   no: "Α 9031", date: "26/10", net: 142.50, vat: 34.20, vatp: 24, kind: "due", check: "αβέβαιο: ΑΦΜ προμηθευτή (θολή σάρωση). Συγκρίνετε με τη φωτογραφία πριν πληρώσετε." },
+  { sup: "Γαλακτοκομικά Άλφα", no: "Α 1077", date: "27/10", net: 66.00,  vat: 8.58,  vatp: 13, kind: "due" },
+  { sup: "Αρτοποιείο Βήτα",    no: "Β 0218", date: "22/10", net: 85.00,  vat: 11.05, vatp: 13, kind: "dup" },
+  { sup: "Καθαριστικά Ζήτα",   no: "Κ 3120", date: "29/10", net: 50.00,  vat: 12.00, vatp: 24, kind: "wrong" },
+  { sup: "Αρτοποιείο Βήτα",    no: "Β 0231", date: "30/10", net: 18.00,  vat: 2.34,  vatp: 13, kind: "cash" }
+];
+var paid = {};
+
+function eur(x) {
+  var s = Math.abs(x).toFixed(2).split(".");
+  s[0] = s[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return (x < 0 ? "−" : "") + s[0] + "," + s[1] + " €";
+}
+function total(i) { return Math.round((i.net + i.vat) * 100) / 100; }
+function plural(n, one, many) { return n + " " + (n === 1 ? one : many); }
+function dmy(d) { var p = d.split("/"); return +p[1] * 100 + +p[0]; }
+
+function card(i, idx) {
+  var el = document.createElement("div");
+  var out = i.kind !== "due";
+  el.className = "inv" + (out ? " out" : "") + (paid[idx] ? " paid" : "");
+  var h = '<div class="row1"><span class="sup">' + i.sup + '</span><span class="money">' + eur(total(i)) + '</span></div>' +
+    '<div class="meta">Τιμολόγιο ' + i.no + ' · ' + i.date + ' · ' + (i.kind === "cash" ? "Μετρητά" : "Επί πιστώσει") + '</div>' +
+    '<div class="calc">' + eur(i.net) + ' + ΦΠΑ ' + i.vatp + '% ' + eur(i.vat) + ' = ' + eur(total(i)) + ' ✓</div>';
+  if (i.prev) h += '<div class="prev">Προηγ. υπόλοιπο ' + eur(i.prev) + ': γράφεται χωριστά, δεν μετράει.</div>';
+  if (i.check) h += '<div class="why"><span class="tag amber">Θέλει έλεγχο</span>' + i.check + '</div>';
+  if (i.kind === "wrong") h += '<div class="why"><span class="tag red">ΛΑΘΟΣ ΚΑΤΑΣΤΗΜΑ</span>Το ΑΦΜ λήπτη δεν είναι του μαγαζιού. Μένει έξω από το σύνολο, για να το δείτε με τον προμηθευτή.</div>';
+  if (i.kind === "dup") h += '<div class="why"><span class="tag grey">ΔΙΠΛΟ</span>Ίδιος προμηθευτής και ίδιος αριθμός με τιμολόγιο που υπάρχει ήδη. Σαρώθηκε δεύτερη φορά. Μετράει μία.</div>';
+  if (i.kind === "cash") h += '<div class="why"><span class="tag green">Μετρητά</span>Πληρώθηκε επί τόπου. Δεν είναι απλήρωτο.</div>';
+  if (!out) h += '<button class="pay" type="button" data-i="' + idx + '">' + (paid[idx] ? "Πληρώθηκε ✓ (αναίρεση)" : "Πλήρωσα") + '</button>';
+  el.innerHTML = h;
+  return el;
+}
+
+function render() {
+  var due = [], outs = [], sum = 0, n = 0, checks = 0, sups = {}, wrongSum = 0;
+  INVOICES.forEach(function (i, idx) {
+    if (i.kind === "due") {
+      due.push(idx);
+      if (!paid[idx]) {
+        sum += total(i); n++;
+        if (i.check) checks++;
+        var s = sups[i.sup] || (sups[i.sup] = { n: 0, v: 0, oldest: i.date });
+        s.n++; s.v += total(i);
+        if (dmy(i.date) < dmy(s.oldest)) s.oldest = i.date;
+      }
+    } else {
+      outs.push(idx);
+      if (i.kind === "wrong") wrongSum += total(i);
+    }
+  });
+  due.sort(function (a, b) { return dmy(INVOICES[a].date) - dmy(INVOICES[b].date); });
+  sum = Math.round(sum * 100) / 100;
+  var supNames = Object.keys(sups);
+
+  document.querySelectorAll(".js-total").forEach(function (e) { e.textContent = eur(sum); });
+  document.querySelectorAll(".js-count").forEach(function (e) { e.textContent = plural(n, "τιμολόγιο", "τιμολόγια"); });
+  document.querySelectorAll(".js-sups").forEach(function (e) { e.textContent = plural(supNames.length, "προμηθευτής", "προμηθευτές"); });
+  document.querySelectorAll(".js-week").forEach(function (e) { e.textContent = INVOICES.length; });
+  document.querySelectorAll(".js-check").forEach(function (e) {
+    e.innerHTML = checks ? "<b>" + plural(checks, "τιμολόγιο θέλει", "τιμολόγια θέλουν") + "</b> ματιά πριν πληρώσετε." : "Κανένα τιμολόγιο δεν θέλει έλεγχο.";
+  });
+
+  var dl = document.getElementById("due-list"); dl.innerHTML = "";
+  due.forEach(function (idx) { dl.appendChild(card(INVOICES[idx], idx)); });
+  var ol = document.getElementById("out-list"); ol.innerHTML = "";
+  outs.forEach(function (idx) { ol.appendChild(card(INVOICES[idx], idx)); });
+
+  supNames.sort(function (a, b) { return dmy(sups[a].oldest) - dmy(sups[b].oldest); });
+  var h = "";
+  supNames.forEach(function (k) {
+    var s = sups[k];
+    h += '<div class="srow"><div><div class="n">' + k + '</div><div class="m">' + plural(s.n, "απλήρωτο", "απλήρωτα") + ' · παλαιότερο ' + s.oldest + '</div></div><div class="v">' + eur(Math.round(s.v * 100) / 100) + '</div></div>';
+  });
+  if (!supNames.length) h += '<div class="srow"><div class="n">Όλα πληρωμένα</div><div class="v">0,00 €</div></div>';
+  h += '<div class="srow total"><div class="n">ΣΥΝΟΛΟ</div><div class="v">' + eur(sum) + '</div></div>';
+  h += '<div class="srow aside"><div class="n">Λάθος κατάστημα (εκτός συνόλου)</div><div class="v">' + eur(wrongSum) + '</div></div>';
+  document.getElementById("sums").innerHTML = h;
+
+  document.querySelectorAll(".pay").forEach(function (b) {
+    b.addEventListener("click", function () { var i = b.getAttribute("data-i"); paid[i] = !paid[i]; render(); });
+  });
+}
+document.getElementById("reset").addEventListener("click", function () { paid = {}; render(); window.scrollTo(0, 0); });
+render();
+</script>
+</body>
+</html>
